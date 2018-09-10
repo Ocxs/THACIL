@@ -43,4 +43,4 @@ python launcher.py  --phase test
 ## Acknowledgements
 Some implementations consult the [ATRank](https://github.com/jinze1994/ATRank), and [DiSAN](https://github.com/taoshen58/DiSAN).
 
-Last Update Date: August 7, 2018
+Last Update Date: Sep 10, 2018
