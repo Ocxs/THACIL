@@ -177,17 +177,6 @@ class Model(object):
     logging.info("Saved model in epoch {}".format(epoch))
 
 
-  def restore_train_cover_image_ckpt(self):
-    var = [(v.name, v) for v in tf.get_collection("train_cover_image_feature")
-           if 'train_cover_image_feature' in v.name]
-    restore_var_name = ['train_cover_image_feature']
-
-    restore_var_list = [(restore_var_name[i], var[i][1]) for i in range(len(restore_var_name))]
-    restore_var_list = dict(restore_var_list)
-    saver = tf.train.Saver(restore_var_list)
-    return saver
-
-
   def compute_acc(self, logit, labels):
     pred = tf.cast(tf.nn.sigmoid(logit)>=0.5, tf.float32)
     correct_pred = tf.equal(pred, labels)
@@ -211,8 +200,15 @@ class Model(object):
   def init_embedding(self):
     category_embedding = var_init('category_embedding', [512, self.cate_dim], tf.random_normal_initializer())
     self.category_embedding = tf.concat([category_embedding, tf.zeros((1, self.cate_dim))], axis=0)
-    train_cover_image_feature = var_init('train_cover_image_feature', shape=[984983, 512], trainable=False)
-    self.train_cover_image_feature = tf.concat([train_cover_image_feature, tf.zeros((1, 512))], axis=0)
+    self.train_visual_emb = tf.Variable(tf.constant(0.0, shape=[984984, 512]), trainable=False, 
+                                        name='train_visual_emb')
+
+
+  def restore_train_visual_emb(self, visual_feature, sess):
+    visual_ph = tf.placeholder(tf.float32, [984984, 512])
+    emb_init = self.train_visual_emb.assign(visual_ph)
+    sess.run(emb_init, feed_dict={visual_ph: visual_feature})
+    logging.info('load train visual feature into GPU memory successfully')
 
 
   def get_cate_emb(self, cate_ids):
@@ -220,7 +216,7 @@ class Model(object):
 
 
   def get_train_cover_image_feature(self, item_ids):
-    return tf.nn.embedding_lookup(self.train_cover_image_feature, item_ids)
+    return tf.nn.embedding_lookup(self.train_visual_emb, item_ids)
 
 
   def set_optimizer(self):

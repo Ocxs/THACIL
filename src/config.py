@@ -8,7 +8,7 @@ from __future__ import print_function
 
 
 class Config:
-  PHASE = 'test'
+  PHASE = 'train'
 
   BATCH_SIZE = 128
   MAX_EPOCH = 20

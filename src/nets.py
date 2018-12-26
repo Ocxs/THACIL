@@ -19,10 +19,8 @@ def var_init(name, shape, initializer=tf.contrib.layers.xavier_initializer(),
       initializer=initializer,
       trainable=trainable
     )
-    if not tf.get_variable_scope().reuse and name != 'train_cover_image_feature':
+    if not tf.get_variable_scope().reuse:
       tf.add_to_collection("parameters", var)
-    if name == 'train_cover_image_feature':
-      tf.add_to_collection('train_cover_image_feature', var)
     return var
 
 def dense(x,

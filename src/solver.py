@@ -26,6 +26,7 @@ class Solver(object):
     self.restore_model_dir = params.restore_model_dir
     self.initial_lr = params.initial_lr
     self.out_dir = params.out_dir
+    self.neg_ratio = params.neg_ratio
     self.summary_dir = os.path.join(self.out_dir, 'summary')
     self.model_dir = os.path.join(self.out_dir, 'ckpt')
 
@@ -42,9 +43,8 @@ class Solver(object):
     sess.run(tf.global_variables_initializer())
     params = [v for v in tf.trainable_variables() if 'adam' not in v.name]
     saver = tf.train.Saver(params, max_to_keep=2)
-    restore_train_feat_saver = self.model.restore_train_cover_image_ckpt()
-    restore_train_feat_saver.restore(sess,
-                                     os.path.join(self.restore_model_dir, 'train_cover_image_feature.ckpt'))
+    self.model.restore_train_visual_emb(self.data.train_visual_feature, sess)
+    self.data.del_temp()
 
     if self.phase == 'test':
       has_ckpt = tf.train.get_checkpoint_state(self.model_dir)
@@ -83,7 +83,7 @@ class Solver(object):
       lr = self.initial_lr
 
       for epoch in range(self.max_epoch):
-        self.data.generate_train_data()
+        self.data.generate_train_data(self.neg_ratio)
         epoch_train_length = self.data.epoch_train_length
         loop_num = int(epoch_train_length // self.batch_size)
         logging.info('start train phase')

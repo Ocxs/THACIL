@@ -53,7 +53,7 @@ class DataLoader(object):
       if neg_num < pos_num * neg_ratio:
         epoch_train_data.extend(item[1])
       else:
-        epoch_train_data.extend(random.sample(item[1], pos_num*neg_ratio))
+        epoch_train_data.extend(random.sample(item[1], int(pos_num*neg_ratio)))
 
     random.shuffle(epoch_train_data)
     self.epoch_train_data = epoch_train_data
@@ -115,14 +115,23 @@ class DataLoader(object):
 
 
   def get_test_cover_img_feature(self, vids):
-    head_vec = [self.test_cover_img_feat[i] for i in vids]
+    head_vec = [self.test_visual_feature[i] for i in vids]
     return head_vec
 
 
   def preload_feat_into_memory(self):
+    train_feature_path = os.path.join(self.data_dir, 'train_cover_image_feature.npy')
     test_feature_path = os.path.join(self.data_dir, 'test_cover_image_feature.npy')
-    self.test_cover_img_feat = np.load(test_feature_path)
-    logging.info('load test head feature')
+    
+    logging.info('load train visual feature')
+    train_visual_feature = np.load(train_feature_path)
+    self.train_visual_feature = np.concatenate([train_visual_feature, [[0.0]*512]], axis=0)
+
+    logging.info('load test visual feature')
+    self.test_visual_feature = np.load(test_feature_path)
+
     user_click_ids_path = os.path.join(self.data_dir, 'user_click_ids.npy')
     self.user_click_ids = np.load(user_click_ids_path)
 
+  def del_temp(self):
+    del self.train_visual_feature
