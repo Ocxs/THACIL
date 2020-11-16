@@ -17,7 +17,7 @@ This repo is our implementation for paper: Temporal Hierarchical Attention at Ca
 
 ## Usage
 ### Download dataset and preprocess
-* Step 1: Download our dataset, named [MicroVideo-1.7M](https://pan.baidu.com/s/1aOmVLqAa0677HqEDXzsvXg) (please contact the author for the password), which has 12,737,619 interactions that 10,986 users have made on 1,704,880 micro-videos. And move it to `data/input/` folder.
+* Step 1: Download our dataset, named [MicroVideo-1.7M](https://pan.baidu.com/s/1iQO23zSXPv1b9y2uLxaJmg) (password: 4xsg), which has 12,737,619 interactions that 10,986 users have made on 1,704,880 micro-videos. And move it to `data/input/` folder.
 * Step 2: Generate intermediate file for training, and move it to `data/input/` folder.
     - Generate `user_click_ids.npy`:
         ```
